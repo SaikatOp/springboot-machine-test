@@ -1,0 +1,26 @@
+@Service
+public class ProductServiceImpl implements ProductService {
+
+    @Autowired private ProductRepository productRepo;
+    @Autowired private CategoryRepository categoryRepo;
+
+    public Page<ProductDTO> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepo.findAll(pageable)
+                          .map(this::convertToDto);
+    }
+
+    private ProductDTO convertToDto(Product product) {
+        ProductDTO dto = new ProductDTO();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setPrice(product.getPrice());
+
+        CategoryDTO catDto = new CategoryDTO();
+        catDto.setId(product.getCategory().getId());
+        catDto.setName(product.getCategory().getName());
+        dto.setCategory(catDto);
+
+        return dto;
+    }
+}
